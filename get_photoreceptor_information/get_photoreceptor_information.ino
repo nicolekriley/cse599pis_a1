@@ -62,9 +62,9 @@ hsl rbgToHSL(rgb current) {
   hsl result;
   
   // get them between a range from 0 to 1. 
-  float r_range1 = rgb.red * 1.0 /255;
-  float g_range1 = rgb.green * 1.0 / 255; 
-  float b_range1 = rgb.blue * 1.0 / 255; 
+  float r_range1 = current.red * 1.0 /255;
+  float g_range1 = current.green * 1.0 / 255; 
+  float b_range1 = current.blue * 1.0 / 255; 
 
   //get the min value
   float minVal = r_range1 < b_range1 ? r_range1 : b_range1;
@@ -117,17 +117,20 @@ hsl rbgToHSL(rgb current) {
 
 }
 
-void hslToRgb(float hue, float saturation, float luminence) {
+rgb hslToRgb(hsl current) {
+  rgb result;
   if (saturation == 0) { //it is a shade of gray
-    int red = luminence * 255; 
-    int blue = luminence * 255;
-    int green = luminence * 255; 
+    result.red = current.luminence * 255; 
+    result.blue = current.luminence * 255;
+    result.green = current.luminence * 255; 
+    return result;
   } else {
     float temporary1;
     if (luminence < .5) {
-      temporary1 = luminence * (1.0 + saturation);
+      temporary1 = current.luminence * (1.0 + current.saturation);
     } else {
-      temporary1 = luminence + saturation - luminence * saturation;
+      temporary1 = current.luminence + current.saturation - current.luminence * current.saturation;
     }
   }
+  return result;
 }
