@@ -119,18 +119,34 @@ hsl rbgToHSL(rgb current) {
 
 rgb hslToRgb(hsl current) {
   rgb result;
-  if (saturation == 0) { //it is a shade of gray
+  if (current.saturation == 0) { //it is a shade of gray
     result.red = current.luminence * 255; 
     result.blue = current.luminence * 255;
     result.green = current.luminence * 255; 
     return result;
+  } 
+  float temporary1;
+  if (current.luminence < .5) {
+    temporary1 = current.luminence * (1.0 + current.saturation);
   } else {
-    float temporary1;
-    if (luminence < .5) {
-      temporary1 = current.luminence * (1.0 + current.saturation);
-    } else {
-      temporary1 = current.luminence + current.saturation - current.luminence * current.saturation;
-    }
+    temporary1 = current.luminence + current.saturation - current.luminence * current.saturation;
   }
+  float temporary2 = 2 * current.luminence - temporary1;
+  float hueAngle = current.hue * 1.0 / 360;
+  float temporaryr = hueAngle + 0.333;
+  if (temporaryr > 1) {
+    temporaryr -= 1;
+  }
+  float temporaryg = hueAngle;
+  float temporaryb = hueAngle - 0.333;
+  if (temporaryb < 0) {
+    temporaryb += 1;
+  }
+  float red;
+  float green;
+  float blue;
+  result.red = red * 255;
+  result.green = green * 255;
+  result.blue = blue * 255;
   return result;
 }
