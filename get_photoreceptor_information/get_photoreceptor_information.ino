@@ -82,7 +82,7 @@ void loop() {
   Serial.println(ledIntensityVal);
 
   CRGB result;
-  hsv2rgb_spectrum( CHSV(colorVal, 255, ledIntensityVal), result);
+  hsv2rgb_rainbow( CHSV(colorVal, 255, ledIntensityVal), result);
   Serial.print(result.r);
   Serial.print(",");
   Serial.print(result.g);
