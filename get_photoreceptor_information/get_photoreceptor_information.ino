@@ -10,16 +10,17 @@ const int PHOTO_INPUT = A1;
 const int SLIDER_INPUT = A5;
 
 struct hsl {
-  float luminence;
-  float hue; 
-  float saturation;
+  float luminence; // between 0 and 1
+  float hue; // 0 to 360 degrees
+  float saturation; // between 0 and 1
 };
 
 struct rgb {
-  float red;
-  float green;
-  float blue;
-};
+  float red; // 0 to 255
+  float green; // 0 to 255
+  float blue; // 0 to 255;
+
+//range from 850 to 550 on slider
 
 static hsl rgbToHSL(rgb current);
 static rgb hslToRGB(hsl current);
@@ -41,17 +42,20 @@ void loop() {
   int potVal = analogRead(PHOTO_INPUT);
   constrain(potVal, 100, 600);
   int potValSlide = analogRead(SLIDER_INPUT);
-  int ledVal = map(potVal, MIN_PHOTORECEPTOR_VAL, MAX_PHOTORECEPTOR_VAL, 0, 255); //get map from regular to led value
+  int ledIntensityVal = map(potVal, MIN_PHOTORECEPTOR_VAL, MAX_PHOTORECEPTOR_VAL, 0, 255); //get map from regular to led value
+  int inverseLedVal = 255- ledIntensityVal; //inverse brightness for photoreceptor;
+
+  
 
   Serial.print(potVal);
   Serial.print(",");
   Serial.print(potValSlide);
   Serial.print(",");
-  Serial.println(ledVal);
+  Serial.println(ledIntensityVal);
 
-  analogWrite(RED_PIN, ledVal);
-  analogWrite(GREEN_PIN, 255-ledVal);
-  analogWrite(BLUE_PIN, ledVal); 
+  analogWrite(RED_PIN, inverseLedVal);
+  analogWrite(GREEN_PIN, 255-inverseLedVal);
+  analogWrite(BLUE_PIN, inverseLedVal); 
 
   delay(1000);
 }
