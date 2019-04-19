@@ -1,6 +1,11 @@
+#include <FastLED.h>
+
 #define MAX_ANALOG_INPUT_VAL 1023
 #define MIN_PHOTORECEPTOR_VAL 100
 #define MAX_PHOTORECEPTOR_VAL 600
+#define NUM_LEDS 1
+
+CRGB leds[NUM_LEDS];
 
 const int BLUE_PIN = 3;
 const int GREEN_PIN = 5; 
@@ -19,6 +24,7 @@ struct rgb {
   float red; // 0 to 255
   float green; // 0 to 255
   float blue; // 0 to 255;
+};
 
 //range from 850 to 550 on slider
 
