@@ -1,4 +1,5 @@
 #include <FastLED.h>
+#include <RGBConverter.h> 
 
 #define MAX_ANALOG_INPUT_VAL 1023
 #define MIN_PHOTORECEPTOR_VAL 100
@@ -81,6 +82,32 @@ void loop() {
   Serial.print(",");
   Serial.println(ledIntensityVal);
 
+  RGBConverter current;
+
+  byte rgb[3]; 
+  double h;
+  double s;
+  double l;
+  h = 1.0 * colorVal / 255;
+  s = 1.0;
+  l = (1.0 * inverseLedVal)/255;
+
+  Serial.println("hsl");
+  Serial.print(h);
+  Serial.print(",");
+  Serial.print(s);
+  Serial.print(",");
+  Serial.println(l);
+
+  current.hslToRgb(h, s, l, rgb);
+  Serial.println("rgb");
+  Serial.print(rgb[0]);
+  Serial.print(",");
+  Serial.print(rgb[1]);
+  Serial.print(",");
+  Serial.println(rgb[2]);
+  
+  /*
   CRGB result;
   hsv2rgb_rainbow( CHSV(colorVal, 255, ledIntensityVal), result);
   Serial.print(result.r);
@@ -88,18 +115,19 @@ void loop() {
   Serial.print(result.g);
   Serial.print(",");
   Serial.println(result.b);
+  */
 
-  analogWrite(RED_PIN, result.r);
-  analogWrite(GREEN_PIN, result.g);
-  analogWrite(BLUE_PIN, result.b);
+  analogWrite(RED_PIN, rgb[0]);
+  analogWrite(GREEN_PIN, rgb[1]);
+  analogWrite(BLUE_PIN, rgb[2]);
 
   delay(1000);
 
   //showAnalogRGB(CRGB(0, 0, 0));
   //delay(1000);
 }
-/*
 
+/*
 // used http://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/ as a refernece on steps.
 hsl rbgToHSL(rgb current) {
 
@@ -159,7 +187,15 @@ hsl rbgToHSL(rgb current) {
   result.luminence = luminence;
   return result;
 
+} 
+
+
+//based off of wikipedia article.
+rgb hslToRgb(hsl current) {
+  C = (1 - (2 * current.luminence) ) * current.saturation;
 }
+
+/*
 
 rgb hslToRgb(hsl current) {
   rgb result;
@@ -189,9 +225,22 @@ rgb hslToRgb(hsl current) {
   float red;
   float green;
   float blue;
+  if (6 * temporaryr < 1) {
+    red = temporary2 + (temporary1- temporary2)  * 6 * temporaryr;
+  } else if (2 * temporaryr < 1) {
+    red = temporary1;
+  } else if (3 * temporary_R < 2) {
+    red = temporary_2 + (temporary1 - temporary2) * (0.666 - temporaryr) * 6; 
+  } else {
+    red = temporary2;
+  }
+
+  if (6 * temporaryr < 1) {
+    
+  }
+  
   result.red = red * 255;
   result.green = green * 255;
   result.blue = blue * 255;
   return result;
-} 
-*/
+} */
