@@ -11,11 +11,10 @@ const int RED_PIN = 6;
 const int PHOTO_INPUT = A1;
 const int SLIDER_INPUT = A5;
 
+//keep track of time
+int startTime = millis();
 
-//range from 850 to 550 on slider
-
-//static hsl rgbToHSL(rgb current);
-//static rgb hslToRGB(hsl current);
+RGBConverter converter;
 
 void setup() {
   // sets up the output pins for led and input pins for sensing from the sensor. 
@@ -27,9 +26,8 @@ void setup() {
   Serial.begin(9600);
 }
 
-//dynamic range is 100 to 400
-
 void loop() {
+  
   // get values out of slider and photoresistor and constrain them. 
   int potVal = analogRead(PHOTO_INPUT);
   potVal = constrain(potVal, 100, 600);
@@ -40,7 +38,7 @@ void loop() {
   int colorVal = map(potValSlide, 200, 600, 0, 255); 
   int ledIntensityVal = map(potVal, MIN_PHOTORECEPTOR_VAL, MAX_PHOTORECEPTOR_VAL, 0, 255); //get map from regular to led value
   int inverseLedVal = 255- ledIntensityVal; //inverse brightness for photoreceptor;
-
+  
   Serial.print(potVal);
   Serial.print(",");
   Serial.print(potValSlide);
@@ -48,9 +46,7 @@ void loop() {
   Serial.print(colorVal);
   Serial.print(",");
   Serial.println(ledIntensityVal);
-
-  RGBConverter current;
-
+   
   byte rgb[3]; 
   double h;
   double s;
@@ -59,7 +55,7 @@ void loop() {
   h = 1- 1.0 * colorVal / 255;
   s = 1.0;
   l = 1-(1.0 * inverseLedVal)/255;
-
+  
   //hsl value result
   Serial.println("hsl");
   Serial.print(h);
@@ -67,22 +63,31 @@ void loop() {
   Serial.print(s);
   Serial.print(",");
   Serial.println(l);
-
+  
   // convert hsl to rgb. 
-  current.hslToRgb(h, s, l, rgb);
+  converter.hslToRgb(h, s, l, rgb);
   Serial.println("rgb");
   Serial.print(rgb[0]);
   Serial.print(",");
   Serial.print(rgb[1]);
   Serial.print(",");
   Serial.println(rgb[2]);
-  
-
+    
   //write values to rgb
   analogWrite(RED_PIN, rgb[0]);
   analogWrite(GREEN_PIN, rgb[1]);
   analogWrite(BLUE_PIN, rgb[2]);
 
-  delay(1000);
+  int delayTime = 1000;
+  int currentTime = millis();
+
+  //delay time is 10 timies longer at a 30 second mark. 
+  if (abs(currentTime - startTime) > 30,000) {
+    startTime = currentTime;
+    Serial.println("its at a 30 second mark");
+    delayTime = 1000 * 10;
+  }
+  
+  delay(delayTime);
 
 }
