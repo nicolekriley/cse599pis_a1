@@ -3,9 +3,10 @@
 #define MAX_ANALOG_INPUT_VAL 1023
 #define MIN_PHOTORECEPTOR_VAL 100
 #define MAX_PHOTORECEPTOR_VAL 600
-#define NUM_LEDS 1
-
-CRGB leds[NUM_LEDS];
+#define RED CRGB(0, 255, 255)
+#define BLUE CRGB(255, 255, 0);
+#define GREEN CRGB(255, 0, 255);
+#define PURPLE CRGB(0, 255, 0);
 
 const int BLUE_PIN = 3;
 const int GREEN_PIN = 5; 
@@ -14,6 +15,7 @@ const int RED_PIN = 6;
 const int PHOTO_INPUT = A1;
 const int SLIDER_INPUT = A5;
 
+/*
 struct hsl {
   float luminence; // between 0 and 1
   float hue; // 0 to 360 degrees
@@ -25,11 +27,12 @@ struct rgb {
   float green; // 0 to 255
   float blue; // 0 to 255;
 };
+*/
 
 //range from 850 to 550 on slider
 
-static hsl rgbToHSL(rgb current);
-static rgb hslToRGB(hsl current);
+//static hsl rgbToHSL(rgb current);
+//static rgb hslToRGB(hsl current);
 
 void setup() {
   // put your setup code here, to run once:
@@ -43,28 +46,59 @@ void setup() {
 
 //dynamic range is 100 to 400
 
+// This came from an example of fastled code for the file AnalogOutput
+void showAnalogRGB( const CRGB& rgb)
+{
+  /*Serial.println("r val"); 
+  Serial.println(rgb.r);
+  delay(500);
+  Serial.println("g val");
+  Serial.println(rgb.g);
+  delay(500);
+  Serial.println("b val");
+  Serial.println(rgb.b);
+  delay(500);*/
+  analogWrite(RED_PIN,   rgb.r );
+  analogWrite(GREEN_PIN, rgb.g );
+  analogWrite(BLUE_PIN,  rgb.b );
+}
+
 void loop() {
   // put your main code here, to run repeatedly:
   int potVal = analogRead(PHOTO_INPUT);
-  constrain(potVal, 100, 600);
+  potVal = constrain(potVal, 100, 600);
   int potValSlide = analogRead(SLIDER_INPUT);
+  potValSlide = constrain(potValSlide, 200, 600); 
+  int colorVal = map(potValSlide, 200, 600, 0, 255); 
   int ledIntensityVal = map(potVal, MIN_PHOTORECEPTOR_VAL, MAX_PHOTORECEPTOR_VAL, 0, 255); //get map from regular to led value
   int inverseLedVal = 255- ledIntensityVal; //inverse brightness for photoreceptor;
-
-  
 
   Serial.print(potVal);
   Serial.print(",");
   Serial.print(potValSlide);
   Serial.print(",");
+  Serial.print(colorVal);
+  Serial.print(",");
   Serial.println(ledIntensityVal);
 
-  analogWrite(RED_PIN, inverseLedVal);
-  analogWrite(GREEN_PIN, 255-inverseLedVal);
-  analogWrite(BLUE_PIN, inverseLedVal); 
+  CRGB result;
+  hsv2rgb_spectrum( CHSV(colorVal, 255, ledIntensityVal), result);
+  Serial.print(result.r);
+  Serial.print(",");
+  Serial.print(result.g);
+  Serial.print(",");
+  Serial.println(result.b);
+
+  analogWrite(RED_PIN, result.r);
+  analogWrite(GREEN_PIN, result.g);
+  analogWrite(BLUE_PIN, result.b);
 
   delay(1000);
+
+  //showAnalogRGB(CRGB(0, 0, 0));
+  //delay(1000);
 }
+/*
 
 // used http://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/ as a refernece on steps.
 hsl rbgToHSL(rgb current) {
@@ -159,4 +193,5 @@ rgb hslToRgb(hsl current) {
   result.green = green * 255;
   result.blue = blue * 255;
   return result;
-}
+} 
+*/
