@@ -1,5 +1,12 @@
 #include <RGBConverter.h> 
 
+/*
+ * takes input from photoreceptor and that inversely affects brightness. Also takes in input from a slider to determine
+ * the color of the RGB in the circuit. Changes the delay by 10 at 30 second marks from the start time. 
+ */
+
+//used library https://github.com/ratkins/RGBConverter
+
 #define MAX_ANALOG_INPUT_VAL 1023
 #define MIN_PHOTORECEPTOR_VAL 100
 #define MAX_PHOTORECEPTOR_VAL 600
