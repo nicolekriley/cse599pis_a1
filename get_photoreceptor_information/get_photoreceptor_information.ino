@@ -15,8 +15,7 @@ const int BLUE_PIN = 3;
 const int GREEN_PIN = 5; 
 const int RED_PIN = 6;
 
-const int PHOTO_INPUT = A1;
-const int SLIDER_INPUT = A5;
+const int SLIDER_INPUT = A0;
 
 //keep track of time
 int startTime = millis();
@@ -28,7 +27,6 @@ void setup() {
   pinMode(RED_PIN, OUTPUT);
   pinMode(BLUE_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
-  pinMode(PHOTO_INPUT, INPUT);
   pinMode(SLIDER_INPUT, INPUT);
   Serial.begin(9600);
 }
@@ -36,13 +34,14 @@ void setup() {
 void loop() {
   
   // get values out of slider and photoresistor and constrain them. 
-  int potVal = analogRead(PHOTO_INPUT);
-  potVal = constrain(potVal, 100, 600);
   int potValSlide = analogRead(SLIDER_INPUT);
-  potValSlide = constrain(potValSlide, 200, 600); 
+  Serial.print("pot val slide before constrain");
+  Serial.println(potValSlide); 
 
   //transform values into appropriate range. 
-  int colorVal = map(potValSlide, 200, 600, 0, 255); 
+
+  int potVal = 100;
+  int colorVal = map(potValSlide, 0, 1023, 0, 255); 
   int ledIntensityVal = map(potVal, MIN_PHOTORECEPTOR_VAL, MAX_PHOTORECEPTOR_VAL, 0, 255); //get map from regular to led value
   int inverseLedVal = 255- ledIntensityVal; //inverse brightness for photoreceptor;
   
@@ -59,11 +58,15 @@ void loop() {
   double s;
   double l;
   //calculate h, s, and l by calculating a proportion of 255. 
-  h = 1- 1.0 * colorVal / 255;
+  h = 2.0 * colorVal / 255;
+  if (h > 1) {
+    h = 1.0;
+  }
   s = 1.0;
   l = 1-(1.0 * inverseLedVal)/255;
   
   //hsl value result
+  
   Serial.println("hsl");
   Serial.print(h);
   Serial.print(",");
